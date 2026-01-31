@@ -1,13 +1,14 @@
 @extends('layouts.admin')
 
-@section('page-title', 'Create Page')
+@section('page-title', 'Edit Category')
 
 @section('content')
     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 text-gray-900">
-            <form method="POST" action="{{ route('pages.store') }}">
+            <form method="POST" action="{{ route('categories.update', $category) }}">
                 @csrf
-                @include('admin.pages.form', ['page' => null])
+                @method('PUT')
+                @include('admin.categories.form', ['category' => $category])
             </form>
         </div>
     </div>

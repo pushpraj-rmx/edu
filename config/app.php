@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Site Type
+    |--------------------------------------------------------------------------
+    |
+    | This value determines the type of site being used. Can be 'course' for
+    | education institutes or 'service' for digital marketing agencies.
+    |
+    */
+
+    'site_type' => env('SITE_TYPE', 'course'),
+
 ];

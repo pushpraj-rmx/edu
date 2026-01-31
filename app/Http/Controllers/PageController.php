@@ -4,15 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Page;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class PageController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource (admin).
      */
-    public function index(): \Illuminate\View\View
+    public function index(): View
     {
-        $pages = Page::latest()->get();
+        $pages = Page::withCount('sections')->latest()->get();
 
         return view('admin.pages.index', compact('pages'));
     }
@@ -20,7 +22,7 @@ class PageController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): \Illuminate\View\View
+    public function create(): View
     {
         return view('admin.pages.create');
     }
@@ -31,12 +33,22 @@ class PageController extends Controller
     public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
         $validated = $request->validate([
-            'title' => 'required',
-            'slug' => 'required|unique:pages,slug',
-            'content' => 'nullable',
-            'meta_title' => 'nullable',
-            'meta_description' => 'nullable',
+            'title' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:pages,slug',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'is_homepage' => 'boolean',
+            'layout' => 'nullable|string|in:public,landing,minimal',
+            'is_active' => 'boolean',
         ]);
+
+        $validated['is_homepage'] = $request->boolean('is_homepage');
+        $validated['is_active'] = $request->boolean('is_active', true);
+        $validated['layout'] = $validated['layout'] ?? 'public';
+
+        if ($validated['is_homepage']) {
+            Page::where('is_homepage', true)->update(['is_homepage' => false]);
+        }
 
         Page::create($validated);
 
@@ -46,8 +58,10 @@ class PageController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Page $page): \Illuminate\View\View
+    public function edit(Page $page): View
     {
+        $page->load('sections');
+
         return view('admin.pages.edit', compact('page'));
     }
 
@@ -57,14 +71,26 @@ class PageController extends Controller
     public function update(Request $request, Page $page): \Illuminate\Http\RedirectResponse
     {
         $validated = $request->validate([
-            'title' => 'required',
-            'slug' => 'required|unique:pages,slug,'.$page->id,
-            'content' => 'nullable',
-            'meta_title' => 'nullable',
-            'meta_description' => 'nullable',
+            'title' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:pages,slug,'.$page->id,
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'is_homepage' => 'boolean',
+            'layout' => 'nullable|string|in:public,landing,minimal',
+            'is_active' => 'boolean',
         ]);
 
-        $page->update($validated);
+        $validated['is_homepage'] = $request->boolean('is_homepage');
+        $validated['is_active'] = $request->boolean('is_active');
+        $validated['layout'] = $validated['layout'] ?? 'public';
+
+        DB::transaction(function () use ($page, $validated) {
+            if ($validated['is_homepage'] && ! $page->is_homepage) {
+                Page::where('is_homepage', true)->update(['is_homepage' => false]);
+            }
+
+            $page->update($validated);
+        });
 
         return redirect()->route('pages.index')->with('success', 'Page updated successfully.');
     }
@@ -77,5 +103,32 @@ class PageController extends Controller
         $page->delete();
 
         return redirect()->route('pages.index')->with('success', 'Page deleted successfully.');
+    }
+
+    /**
+     * Display the homepage (public).
+     */
+    public function home(): View
+    {
+        $page = Page::homepage();
+
+        if (! $page) {
+            abort(404, 'Homepage not configured.');
+        }
+
+        $page->load('activeSections');
+
+        return view('page', compact('page'));
+    }
+
+    /**
+     * Display a page by slug (public).
+     */
+    public function show(string $slug): View
+    {
+        $page = Page::where('slug', $slug)->active()->firstOrFail();
+        $page->load('activeSections');
+
+        return view('page', compact('page'));
     }
 }
