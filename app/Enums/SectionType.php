@@ -28,8 +28,21 @@ enum SectionType: string
     {
         return match ($this) {
             self::Hero => [
+                'badge' => '',
                 'title' => '',
+                'highlight_phrase' => '',
                 'subtitle' => '',
+                'primary_cta_text' => '',
+                'primary_cta_url' => '',
+                'secondary_cta_text' => '',
+                'secondary_cta_url' => '',
+                'image' => null,
+                'stats' => [
+                    ['value' => '', 'label' => ''],
+                    ['value' => '', 'label' => ''],
+                    ['value' => '', 'label' => ''],
+                    ['value' => '', 'label' => ''],
+                ],
                 'background_image' => null,
                 'overlay_opacity' => 50,
                 'cta_text' => '',

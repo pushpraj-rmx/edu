@@ -32,30 +32,63 @@
                     {{-- Hero Section --}}
                     <div id="form-hero" class="section-form hidden space-y-4">
                         <div>
-                            <x-input-label for="hero_title" :value="__('Title')" />
-                            <x-text-input id="hero_title" name="content[title]" type="text" class="mt-1 block w-full" :value="old('content.title')" />
+                            <x-input-label for="hero_badge" :value="__('Badge (pill above headline)')" />
+                            <x-text-input id="hero_badge" name="content[badge]" type="text" class="mt-1 block w-full" :value="old('content.badge')" placeholder="e.g. NEW RELEASE" />
                         </div>
                         <div>
-                            <x-input-label for="hero_subtitle" :value="__('Subtitle')" />
-                            <x-text-input id="hero_subtitle" name="content[subtitle]" type="text" class="mt-1 block w-full" :value="old('content.subtitle')" />
+                            <x-input-label for="hero_title" :value="__('Headline Title')" />
+                            <x-text-input id="hero_title" name="content[title]" type="text" class="mt-1 block w-full" :value="old('content.title')" placeholder="e.g. Grow faster with our platform" />
                         </div>
                         <div>
-                            <x-input-label for="hero_background" :value="__('Background Image Path')" />
-                            <x-text-input id="hero_background" name="content[background_image]" type="text" class="mt-1 block w-full" :value="old('content.background_image')" placeholder="uploads/hero/image.jpg" />
+                            <x-input-label for="hero_highlight_phrase" :value="__('Highlight Phrase (exact text in title that gets gradient)')" />
+                            <x-text-input id="hero_highlight_phrase" name="content[highlight_phrase]" type="text" class="mt-1 block w-full" :value="old('content.highlight_phrase')" placeholder="e.g. faster" />
+                        </div>
+                        <div>
+                            <x-input-label for="hero_subtitle" :value="__('Subtitle / Supporting Paragraph')" />
+                            <textarea id="hero_subtitle" name="content[subtitle]" rows="3" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('content.subtitle') }}</textarea>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <x-input-label for="hero_cta_text" :value="__('CTA Button Text')" />
-                                <x-text-input id="hero_cta_text" name="content[cta_text]" type="text" class="mt-1 block w-full" :value="old('content.cta_text')" />
+                                <x-input-label for="hero_primary_cta_text" :value="__('Primary CTA Text')" />
+                                <x-text-input id="hero_primary_cta_text" name="content[primary_cta_text]" type="text" class="mt-1 block w-full" :value="old('content.primary_cta_text')" placeholder="e.g. Get Started" />
                             </div>
                             <div>
-                                <x-input-label for="hero_cta_url" :value="__('CTA Button URL')" />
-                                <x-text-input id="hero_cta_url" name="content[cta_url]" type="text" class="mt-1 block w-full" :value="old('content.cta_url')" />
+                                <x-input-label for="hero_primary_cta_url" :value="__('Primary CTA URL')" />
+                                <x-text-input id="hero_primary_cta_url" name="content[primary_cta_url]" type="text" class="mt-1 block w-full" :value="old('content.primary_cta_url')" placeholder="/signup" />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <x-input-label for="hero_secondary_cta_text" :value="__('Secondary CTA Text')" />
+                                <x-text-input id="hero_secondary_cta_text" name="content[secondary_cta_text]" type="text" class="mt-1 block w-full" :value="old('content.secondary_cta_text')" placeholder="e.g. Learn More" />
+                            </div>
+                            <div>
+                                <x-input-label for="hero_secondary_cta_url" :value="__('Secondary CTA URL')" />
+                                <x-text-input id="hero_secondary_cta_url" name="content[secondary_cta_url]" type="text" class="mt-1 block w-full" :value="old('content.secondary_cta_url')" placeholder="/features" />
                             </div>
                         </div>
                         <div>
-                            <x-input-label for="hero_overlay" :value="__('Overlay Opacity (0-100)')" />
-                            <x-text-input id="hero_overlay" name="content[overlay_opacity]" type="number" min="0" max="100" class="mt-1 block w-full" :value="old('content.overlay_opacity', 50)" />
+                            <x-input-label for="hero_image" :value="__('Right Column Image Path')" />
+                            <x-text-input id="hero_image" name="content[image]" type="text" class="mt-1 block w-full" :value="old('content.image')" placeholder="uploads/hero/illustration.jpg" />
+                        </div>
+                        <div>
+                            <x-input-label :value="__('Stats (strip below hero)')" class="mb-2" />
+                            <div id="hero-stats-container" class="space-y-3">
+                                @for($i = 0; $i < 4; $i++)
+                                    <div class="hero-stat-item flex gap-4 items-end border rounded-md p-3 bg-gray-50">
+                                        <div class="flex-1">
+                                            <label class="block text-sm font-medium text-gray-700">Value (number/text)</label>
+                                            <input name="content[stats][{{ $i }}][value]" type="text" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" placeholder="e.g. 12" value="{{ old('content.stats.'.$i.'.value') }}">
+                                        </div>
+                                        <div class="flex-1">
+                                            <label class="block text-sm font-medium text-gray-700">Label</label>
+                                            <input name="content[stats][{{ $i }}][label]" type="text" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" placeholder="e.g. YEARS EXPERIENCE" value="{{ old('content.stats.'.$i.'.label') }}">
+                                        </div>
+                                        <button type="button" class="hero-stat-remove text-red-600 hover:text-red-800 text-sm py-1">Remove</button>
+                                    </div>
+                                @endfor
+                            </div>
+                            <button type="button" id="hero-stat-add" class="mt-2 text-sm text-indigo-600 hover:text-indigo-800">+ Add stat</button>
                         </div>
                     </div>
 
@@ -283,10 +316,35 @@
             testimonialIndex++;
         });
 
+        // Hero stats: add row
+        let heroStatIndex = 4;
+        document.getElementById('hero-stat-add')?.addEventListener('click', function() {
+            const container = document.getElementById('hero-stats-container');
+            if (!container) return;
+            const template = `
+                <div class="hero-stat-item flex gap-4 items-end border rounded-md p-3 bg-gray-50">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700">Value (number/text)</label>
+                        <input name="content[stats][${heroStatIndex}][value]" type="text" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" placeholder="e.g. 12">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700">Label</label>
+                        <input name="content[stats][${heroStatIndex}][label]" type="text" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" placeholder="e.g. YEARS EXPERIENCE">
+                    </div>
+                    <button type="button" class="hero-stat-remove text-red-600 hover:text-red-800 text-sm py-1">Remove</button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', template);
+            heroStatIndex++;
+        });
+
         // Remove item handler
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('remove-item')) {
                 e.target.closest('.card-item, .slide-item, .testimonial-item').remove();
+            }
+            if (e.target.classList.contains('hero-stat-remove')) {
+                e.target.closest('.hero-stat-item')?.remove();
             }
         });
     </script>
