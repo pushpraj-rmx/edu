@@ -1,8 +1,100 @@
 @import "tailwindcss";
 
+/* Make `dark:` utilities toggleable via JS (not just prefers-color-scheme). */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 @source "../**/*.blade.php";
 @source "../**/*.js";
 @source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
 @source "../../storage/framework/views/*.php";
 
 @plugin "daisyui";
+
+/* Minimal prose styles for rich text section (no typography plugin). */
+.prose {
+    color: #374151;
+}
+
+.prose-lg {
+    font-size: 1.125rem;
+    line-height: 1.75;
+}
+
+.prose p {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+}
+
+.prose p:first-child {
+    margin-top: 0;
+}
+
+.prose p:last-child {
+    margin-bottom: 0;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+    font-weight: 700;
+    margin-top: 2em;
+    margin-bottom: 0.75em;
+    line-height: 1.25;
+    color: #111827;
+}
+
+.prose h1 {
+    font-size: 2em;
+}
+
+.prose h2 {
+    font-size: 1.5em;
+}
+
+.prose h3 {
+    font-size: 1.25em;
+}
+
+.prose ul,
+.prose ol {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    padding-left: 1.625em;
+}
+
+.prose li {
+    margin-top: 0.5em;
+}
+
+.prose a {
+    color: #4f46e5;
+    text-decoration: underline;
+}
+
+.prose a:hover {
+    color: #4338ca;
+}
+
+.prose strong {
+    font-weight: 600;
+}
+
+[data-theme=dark] .prose {
+    color: #d1d5db;
+}
+
+[data-theme=dark] .prose h1,
+[data-theme=dark] .prose h2,
+[data-theme=dark] .prose h3,
+[data-theme=dark] .prose h4 {
+    color: #f3f4f6;
+}
+
+[data-theme=dark] .prose a {
+    color: #818cf8;
+}
+
+[data-theme=dark] .prose a:hover {
+    color: #a5b4fc;
+}

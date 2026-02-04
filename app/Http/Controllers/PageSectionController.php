@@ -12,6 +12,69 @@ use Illuminate\View\View;
 class PageSectionController extends Controller
 {
     /**
+     * Ensure the section belongs to the given page (for route security).
+     */
+    private function ensureSectionBelongsToPage(Page $page, PageSection $section): void
+    {
+        if ($section->page_id !== $page->id) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Merge uploaded section media into content array.
+     *
+     * @param  array<string, mixed>  $content
+     * @return array<string, mixed>
+     */
+    private function mergeSectionUploads(Request $request, string $type, array $content): array
+    {
+        if ($type === 'hero') {
+            if ($request->hasFile('content_image_file')) {
+                $content['image'] = $request->file('content_image_file')->store('hero', 'public');
+            }
+            if ($request->hasFile('content_background_image_file')) {
+                $content['background_image'] = $request->file('content_background_image_file')->store('hero', 'public');
+            }
+            if (array_key_exists('overlay_opacity', $content)) {
+                $content['overlay_opacity'] = max(0, min(100, (int) ($content['overlay_opacity'] ?? 50)));
+            }
+        }
+
+        if ($type === 'card_grid' && is_array($content['cards'] ?? null)) {
+            $cards = array_values($content['cards']);
+            foreach ($request->file('card_image_file', []) as $index => $file) {
+                if (isset($cards[$index]) && $file->isValid()) {
+                    $cards[$index]['image'] = $file->store('cards', 'public');
+                }
+            }
+            $content['cards'] = $cards;
+        }
+
+        if ($type === 'carousel' && is_array($content['slides'] ?? null)) {
+            $slides = array_values($content['slides']);
+            foreach ($request->file('slide_image_file', []) as $index => $file) {
+                if (isset($slides[$index]) && $file->isValid()) {
+                    $slides[$index]['image'] = $file->store('carousel', 'public');
+                }
+            }
+            $content['slides'] = $slides;
+        }
+
+        if ($type === 'testimonials' && is_array($content['items'] ?? null)) {
+            $items = array_values($content['items']);
+            foreach ($request->file('author_image_file', []) as $index => $file) {
+                if (isset($items[$index]) && $file->isValid()) {
+                    $items[$index]['author_image'] = $file->store('testimonials', 'public');
+                }
+            }
+            $content['items'] = $items;
+        }
+
+        return $content;
+    }
+
+    /**
      * Show the form for creating a new section.
      */
     public function create(Page $page): View
@@ -32,14 +95,34 @@ class PageSectionController extends Controller
             'position' => 'nullable|integer|min:0',
             'is_active' => 'boolean',
         ]);
+        $type = $validated['type'];
+        if ($type === 'hero') {
+            if ($request->hasFile('content_image_file')) {
+                $request->validate(['content_image_file' => 'image|max:2048']);
+            }
+            if ($request->hasFile('content_background_image_file')) {
+                $request->validate(['content_background_image_file' => 'image|max:2048']);
+            }
+        }
+        foreach (array_keys($request->file('card_image_file', []) ?: []) as $key) {
+            $request->validate(["card_image_file.{$key}" => 'image|max:2048']);
+        }
+        foreach (array_keys($request->file('slide_image_file', []) ?: []) as $key) {
+            $request->validate(["slide_image_file.{$key}" => 'image|max:2048']);
+        }
+        foreach (array_keys($request->file('author_image_file', []) ?: []) as $key) {
+            $request->validate(["author_image_file.{$key}" => 'image|max:2048']);
+        }
 
-        $sectionType = SectionType::from($validated['type']);
+        $sectionType = SectionType::from($type);
+        $content = array_merge($sectionType->defaultContent(), $validated['content']);
+        $content = $this->mergeSectionUploads($request, $type, $content);
 
         $maxPosition = $page->sections()->max('position') ?? -1;
 
         $page->sections()->create([
             'type' => $sectionType->value,
-            'content' => array_merge($sectionType->defaultContent(), $validated['content']),
+            'content' => $content,
             'position' => $validated['position'] ?? $maxPosition + 1,
             'is_active' => $request->boolean('is_active', true),
         ]);
@@ -48,62 +131,108 @@ class PageSectionController extends Controller
     }
 
     /**
-     * Show the form for editing a section.
+     * Show the form for editing the section.
      */
-    public function edit(PageSection $section): View
+    public function edit(Page $page, PageSection $section): View
     {
-        $page = $section->page;
+        $this->ensureSectionBelongsToPage($page, $section);
         $sectionTypes = SectionType::cases();
 
         return view('admin.page-sections.edit', compact('section', 'page', 'sectionTypes'));
     }
 
     /**
-     * Update the specified section.
+     * Update the section.
      */
-    public function update(Request $request, PageSection $section): RedirectResponse
+    public function update(Request $request, Page $page, PageSection $section): RedirectResponse
     {
-        $validated = $request->validate([
+        $this->ensureSectionBelongsToPage($page, $section);
+
+        $rules = [
             'content' => 'required|array',
             'position' => 'nullable|integer|min:0',
             'is_active' => 'boolean',
-        ]);
+        ];
+        if ($section->type === SectionType::Hero) {
+            if ($request->hasFile('content_image_file')) {
+                $rules['content_image_file'] = 'image|max:2048';
+            }
+            if ($request->hasFile('content_background_image_file')) {
+                $rules['content_background_image_file'] = 'image|max:2048';
+            }
+        }
+        foreach (array_keys($request->file('card_image_file', []) ?: []) as $key) {
+            $rules["card_image_file.{$key}"] = 'image|max:2048';
+        }
+        foreach (array_keys($request->file('slide_image_file', []) ?: []) as $key) {
+            $rules["slide_image_file.{$key}"] = 'image|max:2048';
+        }
+        foreach (array_keys($request->file('author_image_file', []) ?: []) as $key) {
+            $rules["author_image_file.{$key}"] = 'image|max:2048';
+        }
+        $validated = $request->validate($rules);
+
+        $content = array_merge($section->content, $validated['content']);
+        $content = $this->mergeSectionUploads($request, $section->type->value, $content);
 
         $section->update([
-            'content' => $validated['content'],
+            'content' => $content,
             'position' => $validated['position'] ?? $section->position,
             'is_active' => $request->boolean('is_active'),
         ]);
 
-        return redirect()->route('pages.edit', $section->page)->with('success', 'Section updated successfully.');
+        return redirect()->route('pages.edit', $page)->with('success', 'Section updated successfully.');
     }
 
     /**
-     * Remove the specified section.
+     * Remove the section.
      */
-    public function destroy(PageSection $section): RedirectResponse
+    public function destroy(Page $page, PageSection $section): RedirectResponse
     {
-        $page = $section->page;
+        $this->ensureSectionBelongsToPage($page, $section);
         $section->delete();
 
         return redirect()->route('pages.edit', $page)->with('success', 'Section deleted successfully.');
     }
 
     /**
-     * Update section positions (for reordering).
+     * Toggle section visibility (is_active).
      */
-    public function reorder(Request $request, Page $page): RedirectResponse
+    public function toggle(Page $page, PageSection $section): RedirectResponse
     {
-        $validated = $request->validate([
-            'sections' => 'required|array',
-            'sections.*.id' => 'required|exists:page_sections,id',
-            'sections.*.position' => 'required|integer|min:0',
-        ]);
+        $this->ensureSectionBelongsToPage($page, $section);
+        $section->update(['is_active' => ! $section->is_active]);
 
-        foreach ($validated['sections'] as $sectionData) {
-            PageSection::where('id', $sectionData['id'])
-                ->where('page_id', $page->id)
-                ->update(['position' => $sectionData['position']]);
+        return redirect()->route('pages.edit', $page)->with('success', 'Section visibility updated.');
+    }
+
+    /**
+     * Move section up (swap position with previous section).
+     */
+    public function moveUp(Page $page, PageSection $section): RedirectResponse
+    {
+        $this->ensureSectionBelongsToPage($page, $section);
+        $previous = $page->sections()->where('position', '<', $section->position)->orderByDesc('position')->first();
+        if ($previous) {
+            $sectionPos = $section->position;
+            $section->update(['position' => $previous->position]);
+            $previous->update(['position' => $sectionPos]);
+        }
+
+        return redirect()->route('pages.edit', $page)->with('success', 'Section order updated.');
+    }
+
+    /**
+     * Move section down (swap position with next section).
+     */
+    public function moveDown(Page $page, PageSection $section): RedirectResponse
+    {
+        $this->ensureSectionBelongsToPage($page, $section);
+        $next = $page->sections()->where('position', '>', $section->position)->orderBy('position')->first();
+        if ($next) {
+            $sectionPos = $section->position;
+            $section->update(['position' => $next->position]);
+            $next->update(['position' => $sectionPos]);
         }
 
         return redirect()->route('pages.edit', $page)->with('success', 'Section order updated.');

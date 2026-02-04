@@ -3,16 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\SiteSetting;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class SiteSettingController extends Controller
 {
+    protected function getSiteSetting(): SiteSetting
+    {
+        return SiteSetting::query()->first() ?? SiteSetting::query()->create([
+            'site_name' => config('app.name'),
+        ]);
+    }
+
     /**
      * Show the form for editing the site settings.
      */
-    public function edit(): \Illuminate\View\View
+    public function edit(): View
     {
-        $siteSetting = SiteSetting::firstOrCreate([]);
+        $siteSetting = $this->getSiteSetting();
 
         return view('admin.site-settings.edit', compact('siteSetting'));
     }
@@ -20,7 +29,7 @@ class SiteSettingController extends Controller
     /**
      * Update the site settings in storage.
      */
-    public function update(Request $request): \Illuminate\Http\RedirectResponse
+    public function update(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'site_name' => 'required',
@@ -35,7 +44,7 @@ class SiteSettingController extends Controller
             'stat_3_value' => 'nullable',
         ]);
 
-        $siteSetting = SiteSetting::firstOrCreate([]);
+        $siteSetting = $this->getSiteSetting();
         $siteSetting->update($validated);
 
         return redirect()->route('site-settings.edit')->with('success', 'Site settings updated successfully.');

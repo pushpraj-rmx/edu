@@ -1,11 +1,17 @@
 @extends('layouts.public')
 
-@section('title', ($page->meta_title ?? $page->title) . ' - ' . config('app.name'))
+@section('title', $page->meta_title ?? $page->title)
 
 @push('meta')
     @if ($page->meta_description)
         <meta name="description" content="{{ $page->meta_description }}">
     @endif
+    <meta property="og:title" content="{{ $page->meta_title ?? $page->title }}">
+    @if ($page->meta_description)
+        <meta property="og:description" content="{{ $page->meta_description }}">
+    @endif
+    <meta property="og:type" content="website">
+    <link rel="canonical" href="{{ url()->current() }}">
 @endpush
 
 @section('content')

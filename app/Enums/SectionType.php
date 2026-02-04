@@ -5,6 +5,7 @@ namespace App\Enums;
 enum SectionType: string
 {
     case Hero = 'hero';
+    case StatsStrip = 'stats_strip';
     case CardGrid = 'card_grid';
     case Carousel = 'carousel';
     case Testimonials = 'testimonials';
@@ -14,6 +15,7 @@ enum SectionType: string
     {
         return match ($this) {
             self::Hero => 'Hero Section',
+            self::StatsStrip => 'Stats Strip',
             self::CardGrid => 'Card Grid',
             self::Carousel => 'Carousel',
             self::Testimonials => 'Testimonials',
@@ -37,16 +39,18 @@ enum SectionType: string
                 'secondary_cta_text' => '',
                 'secondary_cta_url' => '',
                 'image' => null,
+                'background_image' => null,
+                'overlay_opacity' => 50,
+                'cta_text' => '',
+                'cta_url' => '',
+            ],
+            self::StatsStrip => [
                 'stats' => [
                     ['value' => '', 'label' => ''],
                     ['value' => '', 'label' => ''],
                     ['value' => '', 'label' => ''],
                     ['value' => '', 'label' => ''],
                 ],
-                'background_image' => null,
-                'overlay_opacity' => 50,
-                'cta_text' => '',
-                'cta_url' => '',
             ],
             self::CardGrid => [
                 'heading' => '',

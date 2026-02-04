@@ -26,7 +26,6 @@ class LayoutSettingController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'header.logo' => 'nullable|string|max:255',
             'header.logo_alt' => 'nullable|string|max:255',
             'header.nav_links' => 'nullable|array',
             'header.nav_links.*.label' => 'required|string|max:100',
@@ -49,10 +48,19 @@ class LayoutSettingController extends Controller
             'footer.contact.email' => 'nullable|email|max:255',
             'footer.copyright' => 'nullable|string|max:255',
         ]);
+        if ($request->hasFile('header_logo_file')) {
+            $request->validate(['header_logo_file' => 'image|max:2048']);
+        }
 
         $headerData = $validated['header'] ?? [];
         $headerData['cta_button']['visible'] = $request->boolean('header.cta_button.visible');
         $headerData['nav_links'] = $this->cleanNavLinks($headerData['nav_links'] ?? []);
+        if ($request->hasFile('header_logo_file')) {
+            $headerData['logo'] = $request->file('header_logo_file')->store('layout', 'public');
+        } else {
+            $existing = LayoutSetting::get('header', LayoutSetting::defaultHeader());
+            $headerData['logo'] = $headerData['logo'] ?? $existing['logo'] ?? null;
+        }
 
         $footerData = $validated['footer'] ?? [];
         $footerData['quick_links'] = $this->cleanLinks($footerData['quick_links'] ?? []);

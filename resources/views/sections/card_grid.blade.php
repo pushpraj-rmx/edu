@@ -4,7 +4,7 @@
     $columns = $content['columns'] ?? 3;
     $cards = $content['cards'] ?? [];
 
-    $gridCols = match($columns) {
+    $gridCols = match ($columns) {
         2 => 'md:grid-cols-2',
         4 => 'md:grid-cols-2 lg:grid-cols-4',
         default => 'md:grid-cols-2 lg:grid-cols-3',
@@ -13,38 +13,41 @@
 
 <section class="py-16 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
-        @if($heading || $subheading)
+        @if ($heading || $subheading)
             <div class="text-center mb-12">
-                @if($heading)
+                @if ($heading)
                     <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">{{ $heading }}</h2>
                 @endif
-                @if($subheading)
+                @if ($subheading)
                     <p class="text-lg text-gray-600 max-w-2xl mx-auto">{{ $subheading }}</p>
                 @endif
             </div>
         @endif
 
-        @if(count($cards) > 0)
+        @if (count($cards) > 0)
             <div class="grid grid-cols-1 {{ $gridCols }} gap-8">
-                @foreach($cards as $card)
+                @foreach ($cards as $card)
                     <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                        @if(!empty($card['image']))
+                        @if (!empty($card['image']))
                             <div class="aspect-video overflow-hidden">
-                                <img src="{{ Storage::url($card['image']) }}" alt="{{ $card['title'] ?? '' }}" class="w-full h-full object-cover">
+                                <img src="{{ str_starts_with($card['image'], 'http://') || str_starts_with($card['image'], 'https://') ? $card['image'] : Storage::url($card['image']) }}"
+                                    alt="{{ $card['title'] ?? '' }}" class="w-full h-full object-cover">
                             </div>
                         @endif
                         <div class="p-6">
-                            @if(!empty($card['title']))
+                            @if (!empty($card['title']))
                                 <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ $card['title'] }}</h3>
                             @endif
-                            @if(!empty($card['description']))
+                            @if (!empty($card['description']))
                                 <p class="text-gray-600 mb-4">{{ $card['description'] }}</p>
                             @endif
-                            @if(!empty($card['link_url']))
-                                <a href="{{ $card['link_url'] }}" class="inline-flex items-center text-indigo-600 hover:text-indigo-700 font-medium">
+                            @if (!empty($card['link_url']))
+                                <a href="{{ $card['link_url'] }}"
+                                    class="inline-flex items-center text-indigo-600 hover:text-indigo-700 font-medium">
                                     {{ $card['link_text'] ?? 'Learn More' }}
                                     <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7"></path>
                                     </svg>
                                 </a>
                             @endif
