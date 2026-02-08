@@ -135,10 +135,50 @@
                                 class="mt-1 block w-full" :value="old('content.heading')" />
                         </div>
                         <div>
-                            <x-input-label for="rich_body" :value="__('Body Content')" />
-                            <textarea id="rich_body" name="content[body]" rows="10"
-                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('content.body') }}</textarea>
-                            <p class="mt-1 text-sm text-gray-500">HTML is allowed for formatting.</p>
+                            <x-input-label for="rich_body_editor" :value="__('Body Content')" />
+                            <input type="hidden" name="content[body]" id="rich_body"
+                                value="{{ old('content.body') }}">
+                            <div
+                                class="mt-1 block w-full rounded-md border border-gray-300 bg-white focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 overflow-hidden">
+                                <div id="rich_body_editor" class="min-h-[250px]"></div>
+                            </div>
+                            <p class="mt-1 text-sm text-gray-500">Use the editor for bold, lists, headings, and more. Image
+                                support can be added later.</p>
+                        </div>
+                    </div>
+
+                    {{-- Image + Text Section --}}
+                    <div id="form-image_text" class="section-form hidden space-y-4">
+                        <div>
+                            <x-input-label for="image_text_image_file" :value="__('Image')" />
+                            <input id="image_text_image_file" name="content_image_file" type="file" accept="image/*"
+                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                            <p class="mt-1 text-sm text-gray-500">Section splits into image (one side) and text (other). On
+                                mobile, image shows first.</p>
+                        </div>
+                        <div>
+                            <x-input-label for="image_text_image_position" :value="__('Image position (desktop)')" />
+                            <select id="image_text_image_position" name="content[image_position]"
+                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                <option value="left">Left</option>
+                                <option value="right" selected>Right</option>
+                            </select>
+                        </div>
+                        <div>
+                            <x-input-label for="image_text_heading" :value="__('Heading')" />
+                            <x-text-input id="image_text_heading" name="content[heading]" type="text"
+                                class="mt-1 block w-full" :value="old('content.heading')" placeholder="e.g. Our Story" />
+                        </div>
+                        <div>
+                            <x-input-label for="image_text_body_editor" :value="__('Body content')" />
+                            <input type="hidden" name="content[body]" id="image_text_body"
+                                value="{{ old('content.body') }}">
+                            <div
+                                class="mt-1 block w-full rounded-md border border-gray-300 bg-white focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 overflow-hidden">
+                                <div id="image_text_body_editor" class="min-h-[250px]"></div>
+                            </div>
+                            <p class="mt-1 text-sm text-gray-500">Use the editor for formatting. Image support can be added
+                                later.</p>
                         </div>
                     </div>
 
@@ -262,6 +302,16 @@
                     targetForm.querySelectorAll('input, select, textarea').forEach(function(el) {
                         el.disabled = false;
                     });
+                    if (selectedType === 'rich_text') {
+                        setTimeout(function() {
+                            window.initRichTextEditor?.();
+                        }, 0);
+                    }
+                    if (selectedType === 'image_text') {
+                        setTimeout(function() {
+                            window.initRichTextEditor?.('image_text_body_editor', 'image_text_body');
+                        }, 0);
+                    }
                 }
             } else {
                 sectionContent.classList.add('hidden');
@@ -269,6 +319,16 @@
         });
 
         typeSelect.dispatchEvent(new Event('change'));
+        if (typeSelect.value === 'rich_text') {
+            setTimeout(function() {
+                window.initRichTextEditor?.();
+            }, 0);
+        }
+        if (typeSelect.value === 'image_text') {
+            setTimeout(function() {
+                window.initRichTextEditor?.('image_text_body_editor', 'image_text_body');
+            }, 0);
+        }
 
         // Card management
         let cardIndex = 0;

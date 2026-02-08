@@ -19,7 +19,9 @@
                                 <div class="absolute inset-0 bg-black/40"></div>
                             </div>
                         @else
-                            <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600"></div>
+                            <div
+                                class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-700 dark:to-purple-700">
+                            </div>
                         @endif
 
                         <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
@@ -31,7 +33,7 @@
                             @endif
                             @if (!empty($slide['link_url']) && !empty($slide['link_text']))
                                 <a href="{{ $slide['link_url'] }}"
-                                    class="inline-flex items-center px-6 py-3 bg-white text-indigo-700 font-medium rounded-md hover:bg-gray-100 transition-colors">
+                                    class="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-200 text-indigo-700 dark:text-gray-900 font-medium rounded-md hover:bg-gray-100 dark:hover:bg-gray-100 transition-colors">
                                     {{ $slide['link_text'] }}
                                 </a>
                             @endif
@@ -44,13 +46,13 @@
         @if (count($slides) > 1)
             <!-- Navigation Arrows -->
             <button
-                class="carousel-prev absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/80 hover:bg-white text-gray-800 transition-colors">
+                class="carousel-prev absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/80 dark:bg-gray-200/90 hover:bg-white dark:hover:bg-gray-100 text-gray-800 dark:text-gray-900 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
             </button>
             <button
-                class="carousel-next absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/80 hover:bg-white text-gray-800 transition-colors">
+                class="carousel-next absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/80 dark:bg-gray-200/90 hover:bg-white dark:hover:bg-gray-100 text-gray-800 dark:text-gray-900 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
@@ -60,7 +62,7 @@
             <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex space-x-2">
                 @foreach ($slides as $index => $slide)
                     <button
-                        class="carousel-dot w-3 h-3 rounded-full transition-colors {{ $index === 0 ? 'bg-white' : 'bg-white/50' }}"
+                        class="carousel-dot w-3 h-3 rounded-full transition-colors {{ $index === 0 ? 'bg-white dark:bg-gray-200' : 'bg-white/50 dark:bg-gray-200/50' }}"
                         data-index="{{ $index }}"></button>
                 @endforeach
             </div>
@@ -85,8 +87,11 @@
                     slide.classList.toggle('opacity-0', i !== index);
                 });
                 dots.forEach((dot, i) => {
-                    dot.classList.toggle('bg-white', i === index);
-                    dot.classList.toggle('bg-white/50', i !== index);
+                    const isActive = i === index;
+                    dot.classList.toggle('bg-white', isActive);
+                    dot.classList.toggle('bg-white/50', !isActive);
+                    dot.classList.toggle('dark:bg-gray-200', isActive);
+                    dot.classList.toggle('dark:bg-gray-200/50', !isActive);
                 });
                 currentIndex = index;
             }

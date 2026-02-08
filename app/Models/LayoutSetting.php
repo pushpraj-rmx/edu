@@ -56,6 +56,7 @@ class LayoutSetting extends Model
     {
         return [
             'logo' => null,
+            'logo_dark' => null,
             'logo_alt' => config('app.name'),
             'nav_links' => [],
             'cta_button' => [

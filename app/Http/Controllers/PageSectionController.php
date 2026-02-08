@@ -71,6 +71,10 @@ class PageSectionController extends Controller
             $content['items'] = $items;
         }
 
+        if ($type === 'image_text' && $request->hasFile('content_image_file')) {
+            $content['image'] = $request->file('content_image_file')->store('image_text', 'public');
+        }
+
         return $content;
     }
 
@@ -103,6 +107,9 @@ class PageSectionController extends Controller
             if ($request->hasFile('content_background_image_file')) {
                 $request->validate(['content_background_image_file' => 'image|max:2048']);
             }
+        }
+        if ($type === 'image_text' && $request->hasFile('content_image_file')) {
+            $request->validate(['content_image_file' => 'image|max:2048']);
         }
         foreach (array_keys($request->file('card_image_file', []) ?: []) as $key) {
             $request->validate(["card_image_file.{$key}" => 'image|max:2048']);
@@ -160,6 +167,9 @@ class PageSectionController extends Controller
             if ($request->hasFile('content_background_image_file')) {
                 $rules['content_background_image_file'] = 'image|max:2048';
             }
+        }
+        if ($section->type === SectionType::ImageText && $request->hasFile('content_image_file')) {
+            $rules['content_image_file'] = 'image|max:2048';
         }
         foreach (array_keys($request->file('card_image_file', []) ?: []) as $key) {
             $rules["card_image_file.{$key}"] = 'image|max:2048';

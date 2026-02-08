@@ -31,8 +31,6 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::resource('offerings', \App\Http\Controllers\OfferingController::class);
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
     Route::resource('posts', \App\Http\Controllers\PostController::class);
-    Route::get('site-settings/edit', [\App\Http\Controllers\SiteSettingController::class, 'edit'])->name('site-settings.edit');
-    Route::patch('site-settings', [\App\Http\Controllers\SiteSettingController::class, 'update'])->name('site-settings.update');
     Route::get('layout-settings/edit', [LayoutSettingController::class, 'edit'])->name('layout-settings.edit');
     Route::patch('layout-settings', [LayoutSettingController::class, 'update'])->name('layout-settings.update');
 });

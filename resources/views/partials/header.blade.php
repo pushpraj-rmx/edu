@@ -11,9 +11,20 @@
             <div class="flex justify-start">
                 <a href="{{ route('home') }}"
                     class="flex items-center font-semibold focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 rounded">
-                    @if (!empty($header['logo']))
-                        <img src="{{ Storage::url($header['logo']) }}"
-                            alt="{{ $header['logo_alt'] ?? config('app.name') }}" class="h-10 w-auto">
+                    @if (!empty($header['logo']) || !empty($header['logo_dark']))
+                        @if (!empty($header['logo']))
+                            <img src="{{ Storage::url($header['logo']) }}"
+                                alt="{{ $header['logo_alt'] ?? config('app.name') }}" class="h-10 w-auto dark:hidden">
+                        @endif
+                        @if (!empty($header['logo_dark']))
+                            <img src="{{ Storage::url($header['logo_dark']) }}"
+                                alt="{{ $header['logo_alt'] ?? config('app.name') }}"
+                                class="h-10 w-auto hidden dark:block">
+                        @elseif (!empty($header['logo']))
+                            <img src="{{ Storage::url($header['logo']) }}"
+                                alt="{{ $header['logo_alt'] ?? config('app.name') }}"
+                                class="h-10 w-auto hidden dark:block">
+                        @endif
                     @else
                         <span class="text-xl">{{ $header['logo_alt'] ?? config('app.name') }}</span>
                     @endif
@@ -116,9 +127,10 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
-                    <svg class="h-6 w-6 menu-close-icon hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    <svg class="h-6 w-6 menu-close-icon hidden" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12">
                         </path>
                     </svg>
                 </button>

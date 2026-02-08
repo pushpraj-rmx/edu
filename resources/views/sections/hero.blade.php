@@ -36,11 +36,12 @@
     }
 @endphp
 
-<section class="relative pt-24 sm:pt-28 lg:pt-32 pb-0 {{ $backgroundUrl ? '' : 'bg-gray-50' }}">
+<section class="relative pt-24 sm:pt-28 lg:pt-32 pb-0 {{ $backgroundUrl ? '' : 'bg-gray-50 dark:bg-gray-900' }}">
     @if ($backgroundUrl)
         <div class="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style="background-image: url('{{ $backgroundUrl }}');" aria-hidden="true"></div>
-        <div class="absolute inset-0 bg-white" style="opacity: {{ $overlayOpacity / 100 }};" aria-hidden="true"></div>
+        <div class="absolute inset-0 bg-white dark:bg-gray-950" style="opacity: {{ $overlayOpacity / 100 }};"
+            aria-hidden="true"></div>
     @endif
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -48,16 +49,17 @@
             <div class="order-2 lg:order-1">
                 @if ($badge !== '')
                     <span
-                        class="inline-block px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-indigo-700 bg-indigo-50 mb-6">
+                        class="inline-block px-4 py-1.5 rounded-full text-xs font-medium tracking-wide text-indigo-700 bg-indigo-50 dark:text-indigo-300 dark:bg-indigo-900/40 mb-6">
                         {{ $badge }}
                     </span>
                 @endif
 
                 @if ($title !== '')
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                    <h1
+                        class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-6">
                         @if ($titlePhrase !== '')
                             {{ $titleBefore }}<span
-                                class="bg-linear-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">{{ $titlePhrase }}</span>{{ $titleAfter }}
+                                class="bg-linear-to-r from-indigo-500 to-purple-600 dark:from-indigo-400 dark:to-purple-500 bg-clip-text text-transparent">{{ $titlePhrase }}</span>{{ $titleAfter }}
                         @else
                             {{ $title }}
                         @endif
@@ -65,7 +67,7 @@
                 @endif
 
                 @if ($subtitle !== '')
-                    <p class="max-w-xl text-lg text-gray-600 leading-relaxed mb-8">
+                    <p class="max-w-xl text-lg text-gray-600 dark:text-gray-400 leading-relaxed mb-8">
                         {{ $subtitle }}
                     </p>
                 @endif
@@ -74,7 +76,7 @@
                     <div class="flex flex-wrap items-center gap-4">
                         @if ($primaryCtaText !== '' && $primaryCtaUrl !== '')
                             <a href="{{ $primaryCtaUrl }}"
-                                class="inline-flex items-center gap-2 rounded-full bg-gray-900 text-white px-6 py-3 text-base font-medium hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">
+                                class="inline-flex items-center gap-2 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 text-base font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
                                 {{ $primaryCtaText }}
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                     aria-hidden="true">
@@ -85,7 +87,7 @@
                         @endif
                         @if ($secondaryCtaText !== '' && $secondaryCtaUrl !== '')
                             <a href="{{ $secondaryCtaUrl }}"
-                                class="text-gray-900 font-medium underline-offset-4 hover:underline focus:outline-none focus:ring-2 focus:ring-gray-400 rounded">
+                                class="text-gray-900 dark:text-gray-200 font-medium underline-offset-4 hover:underline focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 rounded">
                                 {{ $secondaryCtaText }}
                             </a>
                         @endif
@@ -97,19 +99,20 @@
             <div class="order-1 lg:order-2 relative pl-0 lg:pl-8">
                 @if ($imageUrl)
                     <div class="relative">
-                        <div class="absolute -top-4 -right-4 w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-indigo-100/60 blur-2xl -z-10"
+                        <div class="absolute -top-4 -right-4 w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-indigo-100/60 dark:bg-indigo-900/30 blur-2xl -z-10"
                             aria-hidden="true"></div>
-                        <div class="absolute -bottom-8 -left-8 w-48 h-48 rounded-full bg-purple-100/50 blur-2xl -z-10"
+                        <div class="absolute -bottom-8 -left-8 w-48 h-48 rounded-full bg-purple-100/50 dark:bg-purple-900/20 blur-2xl -z-10"
                             aria-hidden="true"></div>
                         <img src="{{ $imageUrl }}" alt="{{ $title }}"
-                            class="relative w-full max-w-lg mx-auto rounded-2xl shadow-lg object-cover">
+                            class="relative w-full max-w-lg mx-auto rounded-2xl shadow-lg dark:shadow-gray-950/50 object-cover">
                     </div>
                 @else
                     <div
-                        class="relative w-full max-w-lg mx-auto aspect-square rounded-2xl bg-white/80 border border-gray-200/80 flex items-center justify-center">
-                        <div class="absolute inset-0 rounded-2xl bg-indigo-100/40 blur-2xl -z-10" aria-hidden="true">
+                        class="relative w-full max-w-lg mx-auto aspect-square rounded-2xl bg-white/80 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80 flex items-center justify-center">
+                        <div class="absolute inset-0 rounded-2xl bg-indigo-100/40 dark:bg-indigo-900/20 blur-2xl -z-10"
+                            aria-hidden="true">
                         </div>
-                        <span class="text-gray-400 text-sm">Hero image</span>
+                        <span class="text-gray-400 dark:text-gray-500 text-sm">Hero image</span>
                     </div>
                 @endif
             </div>

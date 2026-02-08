@@ -10,6 +10,7 @@ enum SectionType: string
     case Carousel = 'carousel';
     case Testimonials = 'testimonials';
     case RichText = 'rich_text';
+    case ImageText = 'image_text';
 
     public function label(): string
     {
@@ -20,6 +21,7 @@ enum SectionType: string
             self::Carousel => 'Carousel',
             self::Testimonials => 'Testimonials',
             self::RichText => 'Rich Text',
+            self::ImageText => 'Image + Text',
         };
     }
 
@@ -71,6 +73,12 @@ enum SectionType: string
             self::RichText => [
                 'heading' => null,
                 'body' => '',
+            ],
+            self::ImageText => [
+                'image' => null,
+                'heading' => '',
+                'body' => '',
+                'image_position' => 'right',
             ],
         };
     }

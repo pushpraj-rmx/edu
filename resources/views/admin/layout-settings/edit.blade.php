@@ -14,7 +14,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <x-input-label for="header_logo_file" :value="__('Logo')" />
+                        <x-input-label for="header_logo_file" :value="__('Logo (light theme)')" />
                         <input id="header_logo_file" name="header_logo_file" type="file" accept="image/*"
                             class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
                         @if (!empty($header['logo']))
@@ -26,6 +26,18 @@
                     </div>
 
                     <div>
+                        <x-input-label for="header_logo_dark_file" :value="__('Logo (dark theme)')" />
+                        <input id="header_logo_dark_file" name="header_logo_dark_file" type="file" accept="image/*"
+                            class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        @if (!empty($header['logo_dark']))
+                            <p class="mt-1 text-sm text-gray-500">Current dark logo:</p>
+                            <img src="{{ Storage::url($header['logo_dark']) }}" alt=""
+                                class="mt-2 h-12 w-auto object-contain">
+                        @endif
+                        <x-input-error class="mt-2" :messages="$errors->get('header_logo_dark_file')" />
+                    </div>
+
+                    <div class="md:col-span-2">
                         <x-input-label for="header_logo_alt" :value="__('Logo Alt Text / Site Name')" />
                         <x-text-input id="header_logo_alt" name="header[logo_alt]" type="text" class="mt-1 block w-full"
                             :value="old('header.logo_alt', $header['logo_alt'] ?? '')" />

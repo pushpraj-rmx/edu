@@ -51,15 +51,23 @@ class LayoutSettingController extends Controller
         if ($request->hasFile('header_logo_file')) {
             $request->validate(['header_logo_file' => 'image|max:2048']);
         }
+        if ($request->hasFile('header_logo_dark_file')) {
+            $request->validate(['header_logo_dark_file' => 'image|max:2048']);
+        }
 
         $headerData = $validated['header'] ?? [];
         $headerData['cta_button']['visible'] = $request->boolean('header.cta_button.visible');
         $headerData['nav_links'] = $this->cleanNavLinks($headerData['nav_links'] ?? []);
+        $existing = LayoutSetting::get('header', LayoutSetting::defaultHeader());
         if ($request->hasFile('header_logo_file')) {
             $headerData['logo'] = $request->file('header_logo_file')->store('layout', 'public');
         } else {
-            $existing = LayoutSetting::get('header', LayoutSetting::defaultHeader());
             $headerData['logo'] = $headerData['logo'] ?? $existing['logo'] ?? null;
+        }
+        if ($request->hasFile('header_logo_dark_file')) {
+            $headerData['logo_dark'] = $request->file('header_logo_dark_file')->store('layout', 'public');
+        } else {
+            $headerData['logo_dark'] = $headerData['logo_dark'] ?? $existing['logo_dark'] ?? null;
         }
 
         $footerData = $validated['footer'] ?? [];

@@ -20,8 +20,9 @@
     @empty
         {{-- No sections - show page title as fallback --}}
         <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
+            <div
+                class="bg-white dark:bg-gray-800/80 overflow-hidden shadow-sm dark:shadow-gray-950/50 sm:rounded-lg border border-transparent dark:border-gray-700/50">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
                     <h1 class="text-3xl font-bold">{{ $page->title }}</h1>
                 </div>
             </div>

@@ -89,6 +89,10 @@
                                             ({{ count($section->content['items'] ?? []) }} items)
                                         @break
 
+                                        @case('image_text')
+                                            {{ $section->content['heading'] ?? 'Image + Text' }}
+                                        @break
+
                                         @default
                                             —
                                     @endswitch
